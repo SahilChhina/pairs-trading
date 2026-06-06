@@ -1,0 +1,52 @@
+project:
+  name: "Statistical Arbitrage Pairs Trading Engine"
+  initial_capital: 100000
+
+universe:
+  tickers:
+    - KO
+    - PEP
+    - GS
+    - MS
+    - JPM
+    - BAC
+    - XOM
+    - CVX
+    - MA
+    - V
+    - HD
+    - LOW
+  start_date: "2018-01-01"
+  end_date: null
+
+pair_selection:
+  min_history_days: 750
+  correlation_threshold: 0.70
+  cointegration_pvalue_threshold: 0.05
+  max_pairs: 10
+
+model:
+  use_kalman_filter: true
+  rolling_z_window: 60
+  min_z_window: 30
+
+signals:
+  entry_threshold: 2.0
+  exit_threshold: 0.25
+  stop_loss_threshold: 3.5
+  max_holding_days: 20
+
+backtest:
+  train_start: "2018-01-01"
+  train_end: "2021-12-31"
+  test_start: "2022-01-01"
+  test_end: null
+  capital_per_trade_pct: 0.10
+  transaction_cost_bps: 5
+  slippage_bps: 5
+  allow_overlapping_positions: false
+
+risk:
+  max_open_positions: 5
+  max_pair_allocation_pct: 0.10
+  max_portfolio_drawdown_stop: 0.25

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.env
+.venv
+venv/
+*.egg
+.DS_Store
+
+# Raw price data (large, regeneratable via yfinance)
+data/raw/
+data/processed/
+
+# Backtest CSVs (committed as JSON in web/public instead)
+data/results/*.csv
+data/results/*.parquet
+
+# Keep figures so Python-generated charts are committed
+# (web/public/figures/ is kept separately)
+
+# Node
+web/node_modules/
+web/dist/
+web/.vite/
+
+# Jupyter
+.ipynb_checkpoints/
