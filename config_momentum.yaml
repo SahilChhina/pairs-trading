@@ -1,0 +1,24 @@
+project:
+  name: "Cross-Sectional Momentum Engine"
+  initial_capital: 100000
+
+universe:
+  # If null, uses src/momentum/universe.py MOMENTUM_UNIVERSE (~50 names).
+  tickers: null
+  # Start early enough to have a full 12-month warm-up before the trading window.
+  start_date: "2016-01-01"
+  end_date: null
+
+signal:
+  lookback_days: 252      # 12 months
+  skip_days: 21           # skip most recent month (12-1 momentum)
+  top_quantile: 0.2       # long top 20%, short bottom 20%
+  long_short: true        # true = dollar-neutral L/S; false = long-only top quantile
+
+backtest:
+  # Trading window — performance is measured from here. Scores can look back
+  # into pre-trade history for warm-up.
+  trade_start: "2018-01-01"
+  trade_end: null
+  transaction_cost_bps: 5
+  slippage_bps: 5

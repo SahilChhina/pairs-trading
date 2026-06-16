@@ -4,6 +4,7 @@ import PairSection from "./components/PairSection.jsx";
 import ResultsSection from "./components/ResultsSection.jsx";
 import TradeSection from "./components/TradeSection.jsx";
 import DiagnosticsSection from "./components/DiagnosticsSection.jsx";
+import MomentumSection from "./components/MomentumSection.jsx";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -146,6 +147,9 @@ export default function App() {
 
           {/* ── STEP 6: Every trade ───────────────────── */}
           <TradeSection trades={data.trades} />
+
+          {/* ── MOMENTUM STRATEGY ─────────────────────── */}
+          {data.momentum && <MomentumSection data={data.momentum} />}
 
           {/* ── Appendix: all charts ──────────────────── */}
           <DiagnosticsSection figures={data.figures} base={BASE} all label="All diagnostic charts" stepNum="Appendix" />
