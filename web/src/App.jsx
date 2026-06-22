@@ -5,6 +5,7 @@ import ResultsSection from "./components/ResultsSection.jsx";
 import TradeSection from "./components/TradeSection.jsx";
 import DiagnosticsSection from "./components/DiagnosticsSection.jsx";
 import MomentumSection from "./components/MomentumSection.jsx";
+import MonteCarloSection from "./components/MonteCarloSection.jsx";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -150,6 +151,9 @@ export default function App() {
 
           {/* ── MOMENTUM STRATEGY ─────────────────────── */}
           {data.momentum && <MomentumSection data={data.momentum} />}
+
+          {/* ── MONTE CARLO ROBUSTNESS ────────────────── */}
+          {data.momentum?.monte_carlo && <MonteCarloSection mc={data.momentum.monte_carlo} />}
 
           {/* ── Appendix: all charts ──────────────────── */}
           <DiagnosticsSection figures={data.figures} base={BASE} all label="All diagnostic charts" stepNum="Appendix" />

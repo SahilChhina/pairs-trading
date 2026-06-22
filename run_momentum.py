@@ -25,6 +25,7 @@ from src.data_loader import clean_price_data, download_price_data, load_prices, 
 from src.metrics import calculate_all_metrics
 from src.momentum.analysis import active_return_stats, factor_stats
 from src.momentum.backtest import run_equal_weight_benchmark, run_momentum_backtest
+from src.momentum.monte_carlo import run_monte_carlo
 from src.momentum.universe import get_momentum_universe
 from src.utils import ensure_dirs, load_config, setup_logging
 
@@ -97,11 +98,65 @@ def step_backtest(cfg: dict) -> None:
     print(f"\nResults written to {RESULTS_DIR}/")
 
 
+def step_monte_carlo(cfg: dict) -> None:
+    import pandas as pd
+
+    mc_cfg = cfg.get("monte_carlo", {})
+    n_sims = mc_cfg.get("n_sims", 10_000)
+    seed = mc_cfg.get("seed", 42)
+    capital = cfg["project"]["initial_capital"]
+
+    trades_path = Path(RESULTS_DIR) / "trades.csv"
+    rebal_path = Path(RESULTS_DIR) / "rebalance_log.csv"
+    metrics_path = Path(RESULTS_DIR) / "metrics.json"
+    if not trades_path.exists() or not rebal_path.exists():
+        logger.error("Run --backtest first: trades.csv / rebalance_log.csv not found.")
+        return
+
+    trades = pd.read_csv(trades_path)
+    rebalance_log = pd.read_csv(rebal_path)
+    bench_total = None
+    if metrics_path.exists():
+        bench_total = json.loads(metrics_path.read_text()).get("benchmark_total_return_pct")
+
+    report = run_monte_carlo(
+        trades,
+        rebalance_log,
+        initial_capital=capital,
+        benchmark_total_return_pct=bench_total,
+        n_sims=n_sims,
+        seed=seed,
+    )
+
+    with open(f"{RESULTS_DIR}/monte_carlo.json", "w") as f:
+        json.dump(report, f, indent=2)
+
+    tb = report["trade_bootstrap"]
+    mb = report["monthly_bootstrap"]
+    print(f"\n=== Monte Carlo ({report['n_sims']:,} simulations) ===")
+    print("\n-- Trade-level bootstrap (is the per-trade edge real?) --")
+    print(f"  actual mean trade return      {tb['actual_mean_return_pct']}%")
+    print(f"  mean return 5th/50th/95th     {tb['mean_return_pct']['p5']}% / {tb['mean_return_pct']['p50']}% / {tb['mean_return_pct']['p95']}%")
+    print(f"  profit factor 5th/50th/95th   {tb['profit_factor']['p5']} / {tb['profit_factor']['p50']} / {tb['profit_factor']['p95']}")
+    print(f"  sims with positive edge       {tb['pct_sims_mean_positive']}%")
+    print(f"  sims with profit factor > 1   {tb['pct_sims_pf_above_1']}%")
+    print("\n-- Monthly-return bootstrap (range of outcomes & drawdowns) --")
+    print(f"  actual total return           {mb['actual_total_return_pct']}%")
+    print(f"  total return 5th/50th/95th    {mb['total_return_pct']['p5']}% / {mb['total_return_pct']['p50']}% / {mb['total_return_pct']['p95']}%")
+    print(f"  max drawdown 5th/50th/95th    {mb['max_drawdown_pct']['p5']}% / {mb['max_drawdown_pct']['p50']}% / {mb['max_drawdown_pct']['p95']}%")
+    print(f"  sharpe 5th/50th/95th          {mb['sharpe_ratio']['p5']} / {mb['sharpe_ratio']['p50']} / {mb['sharpe_ratio']['p95']}")
+    print(f"  sims ending positive          {mb['pct_sims_positive']}%")
+    if "pct_sims_beat_benchmark" in mb:
+        print(f"  sims beating benchmark        {mb['pct_sims_beat_benchmark']}%")
+    print(f"\nResults written to {RESULTS_DIR}/monte_carlo.json")
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Cross-Sectional Momentum Engine")
     p.add_argument("--config", default="config_momentum.yaml")
     p.add_argument("--download-data", action="store_true")
     p.add_argument("--backtest", action="store_true")
+    p.add_argument("--monte-carlo", action="store_true")
     p.add_argument("--all", action="store_true")
     return p.parse_args()
 
@@ -110,11 +165,13 @@ def main() -> None:
     args = parse_args()
     setup_logging()
     cfg = load_config(args.config)
-    run_all = args.all or not any([args.download_data, args.backtest])
+    run_all = args.all or not any([args.download_data, args.backtest, args.monte_carlo])
     if args.download_data or run_all:
         step_download(cfg)
     if args.backtest or run_all:
         step_backtest(cfg)
+    if args.monte_carlo or run_all:
+        step_monte_carlo(cfg)
 
 
 if __name__ == "__main__":

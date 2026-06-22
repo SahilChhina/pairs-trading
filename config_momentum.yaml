@@ -22,3 +22,7 @@ backtest:
   trade_end: null
   transaction_cost_bps: 5
   slippage_bps: 5
+
+monte_carlo:
+  n_sims: 10000
+  seed: 42

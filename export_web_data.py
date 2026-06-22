@@ -119,6 +119,13 @@ def _load_momentum_trades() -> list[dict]:
     return df.to_dict(orient="records")
 
 
+def _load_monte_carlo() -> dict:
+    path = MOMENTUM_DIR / "monte_carlo.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    return {}
+
+
 def main() -> None:
     WEB_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -138,6 +145,7 @@ def main() -> None:
             "metrics": mom_metrics,
             "equity_curve": mom_equity,
             "trades": mom_trades,
+            "monte_carlo": _load_monte_carlo(),
         },
     }
 
@@ -153,6 +161,7 @@ def main() -> None:
     print(f"  momentum.metrics:  {len(mom_metrics)} fields")
     print(f"  momentum.equity:   {len(mom_equity)} points")
     print(f"  momentum.trades:   {len(mom_trades)} rows")
+    print(f"  monte_carlo:       {'present' if _load_monte_carlo() else 'missing'}")
 
 
 if __name__ == "__main__":

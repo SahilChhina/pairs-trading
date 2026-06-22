@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15 21:46:34",
+  "generated_at": "2026-06-21 23:52:54",
   "project_name": "Statistical Arbitrage Pairs Trading Engine",
   "metrics": {
     "initial_capital": 100000.0,
@@ -44559,6 +44559,75 @@
         "net_pnl": -0.0,
         "holding_days": 0
       }
-    ]
+    ],
+    "monte_carlo": {
+      "n_sims": 10000,
+      "seed": 42,
+      "trade_bootstrap": {
+        "n_trades": 2244,
+        "n_sims": 10000,
+        "actual_mean_return_pct": 0.3959,
+        "actual_win_rate_pct": 50.27,
+        "mean_return_pct": {
+          "p5": 0.0305,
+          "p25": 0.2451,
+          "p50": 0.3922,
+          "p75": 0.5386,
+          "p95": 0.751
+        },
+        "win_rate_pct": {
+          "p5": 48.574,
+          "p25": 49.5544,
+          "p50": 50.2674,
+          "p75": 50.9358,
+          "p95": 52.0053
+        },
+        "profit_factor": {
+          "p5": 0.9948,
+          "p25": 1.0567,
+          "p50": 1.1025,
+          "p75": 1.1494,
+          "p95": 1.2218
+        },
+        "pct_sims_mean_positive": 96.19,
+        "pct_sims_pf_above_1": 93.96
+      },
+      "monthly_bootstrap": {
+        "n_months": 101,
+        "n_sims": 10000,
+        "actual_total_return_pct": 67.22,
+        "total_return_pct": {
+          "p5": -43.3361,
+          "p25": 6.6038,
+          "p50": 67.6506,
+          "p75": 159.3549,
+          "p95": 379.8815
+        },
+        "cagr_pct": {
+          "p5": -6.5262,
+          "p25": 0.7627,
+          "p50": 6.3315,
+          "p75": 11.9891,
+          "p95": 20.4833
+        },
+        "max_drawdown_pct": {
+          "p5": -66.8293,
+          "p25": -51.0046,
+          "p50": -40.924,
+          "p75": -32.4718,
+          "p95": -23.4066
+        },
+        "sharpe_ratio": {
+          "p5": -0.1686,
+          "p25": 0.1497,
+          "p50": 0.3917,
+          "p75": 0.6341,
+          "p95": 1.0075
+        },
+        "pct_sims_positive": 78.29,
+        "benchmark_total_return_pct": 295.22,
+        "pct_sims_beat_benchmark": 9.2
+      }
+    }
   }
 }
